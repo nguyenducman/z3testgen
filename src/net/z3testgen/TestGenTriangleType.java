@@ -29,7 +29,7 @@ class TriangleType1{
         this.type=type;
     }
 }
-public class TestGenTriangleType {
+	public class TestGenTriangleType {
 
 
 	
@@ -41,7 +41,7 @@ public class TestGenTriangleType {
          
 		 Params p = ctx.mkParams();
 		 
-		 Tactic using = ctx.usingParams(smtTactic, p); //then(simplifyTactic, smtTactic, new Tactic[] {});
+		 Tactic using = ctx.usingParams(smtTactic, p); 
 		 //Read file SMT2
 		 BoolExpr expr = ctx.parseSMTLIB2File("input/Triangle.smt2",null,null,null,null);
 		 Solver s = ctx.mkSolver(using);	
@@ -106,17 +106,19 @@ public class TestGenTriangleType {
 			 s.setParameters(p);	
 
 			 m = s.getModel(); // get value and print out
-
+			
+			 //get variable name 
 			 a =  ctx.mkIntConst(m.getConstDecls()[1].getName());
 			 b =  ctx.mkIntConst(m.getConstDecls()[0].getName());
 			 c =  ctx.mkIntConst(m.getConstDecls()[2].getName());
 			 
-			 //f = //m.getConstDecls()[3].getName();
+			 // get value from the model and asign to variable aa,bb,cc
 			 aa= (IntExpr)m.eval(m.getConstInterp(m.getConstDecls()[1]), false);
 			 bb= (IntExpr)m.eval(m.getConstInterp(m.getConstDecls()[0]), false);
 			 cc= (IntExpr)m.eval(m.getConstInterp(m.getConstDecls()[2]), false);
 			 tong = (IntExpr) ctx.mkAdd(aa,bb,cc);
 			 f = m.eval(m.getConstInterp(m.getConstDecls()[3]), false);
+			 //Check values and remark the properties of variable's value
 			 if (Integer.parseInt(aa.toString())== Integer.parseInt(LBound.toString())){
 				 writer.append(""+ aa+"(LBound)");
 			 } else if (Integer.parseInt(aa.toString())== Integer.parseInt(UBound.toString())){
@@ -144,7 +146,7 @@ public class TestGenTriangleType {
 		
 			//====================== add to ArrayList================
 
-//			 TestData.add(new TriangleType1(aa,bb,cc,m.eval(m.getConstInterp(m.getConstDecls()[3]), false)));
+			 //	TestData.add(new TriangleType1(aa,bb,cc,m.eval(m.getConstInterp(m.getConstDecls()[3]), false)));
 			 
 			 // constraint LBound <= a,b,c <=UBound	 
 			 s.add(ctx.mkAnd(ctx.mkAnd(ctx.mkLe(a,UBound),ctx.mkLe(b,UBound),ctx.mkLe(c,UBound)),
@@ -164,7 +166,6 @@ public class TestGenTriangleType {
 				//				 ctx.mkAnd(ctx.mkLt(a,NUBound),ctx.mkLt(b,NUBound),ctx.mkLt(c,NUBound))));	
 			 
 	
-	//			 System.out.println(g.getFormulas());
 			 //only EQUI
 			 //s.add(ctx.mkAnd(ctx.mkEq(a, b),ctx.mkEq(b, c) ));
 			 /*
@@ -222,32 +223,8 @@ public class TestGenTriangleType {
 			 j++;
 		 }
 //		  //Sap xep!
-////	        Collections.sort(danhSach, new Comparator<SinhVien>() {
-////	            @Override
-////	            public int compare(SinhVien sv1, SinhVien sv2) {
-////	                if (sv1.diem < sv2.diem) {
-////	                    return 1;
-////	                } else {
-////	                    if (sv1.diem == sv2.diem) {
-////	                        return 0;
-////	                    } else {
-////	                        return -1;
-////	                    }
-////	                }
-////	            }
-////	        });
+////	        Collections.sort(TestData, new Comparator<TriangleType1>());
 //		 for (int k=0;k<TestData.size();k++){
-////			if (){
-////						
-////			 writer.append(""+TestData.get(k).sideA);
-////			 writer.append(',');
-////			 writer.append(""+TestData.get(k).sideB);
-////			 writer.append(',');
-////			 writer.append(""+TestData.get(k).sideC);
-////			 writer.append(',');
-////			 writer.append(""+TestData.get(k).type);
-////			 writer.append('\n');		
-//			}	 
 //			 writer.append(""+TestData.get(k).sideA);
 //			 writer.append(',');
 //			 writer.append(""+TestData.get(k).sideB);
