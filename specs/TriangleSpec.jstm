@@ -1,0 +1,30 @@
+public class Triangle {
+	enum TriangleType {	EQUI, ISO, SCA, NOT	}
+	// \pre {a>15 || b>15 || c>15}
+	//@ \def eq_ab { a == b }
+	//@ \def eq_bc { b == c }
+	//@ \def eq_ca { c == a }
+	//@ \def tri1 { a + b > c }
+	//@ \def tri2 { b + c > a }
+	//@ \def tri3 { c + a > b }
+	//@ \def tri { $tri1 && $tri2 && $tri3 }
+	
+	//@ \part:judge {
+	//@ 	\"check1" $tri && !($eq_ab) && !($eq_bc) && !($eq_ca),
+	//@ 	\"check2" $tri && $eq_ab && $eq_bc,
+	//@		\"check3&4_1" $tri && $eq_ab && !($eq_bc),
+	//@ 	\"check3&4_2" $tri && $eq_bc && !($eq_ca),
+	//@		\"check3&4_3" $tri && $eq_ca && !($eq_ab),
+	//@ 	\"check5" a==0 || b==0 || c==0,
+	//@ 	\"check6" a<0 || b<0 || c<0,
+	// 	\"check7&8_1" a==b+c,
+	// 	\"check7&8_2" b==c+a,
+	// 	\"check7&8_3" c==a+b,
+	// 	\"check9&10_1" a>b+c,
+	// 	\"check9&10_2" b>c+a,
+	// 	\"check9&10_3" c>a+b,
+	//@ }
+	
+		public TriangleType judge(int a, int b, int c);
+	//@ \run:judge "main" { valid}
+}
