@@ -17,12 +17,7 @@ public class Triangle {
 	//@		\"check3&4_3" $tri && $eq_ca && !($eq_ab),
 	//@ 	\"check5" a==0 || b==0 || c==0,
 	//@ 	\"check6" a<0 || b<0 || c<0,
-	// 	\"check7&8_1" a==b+c,
-	// 	\"check7&8_2" b==c+a,
-	// 	\"check7&8_3" c==a+b,
-	// 	\"check9&10_1" a>b+c,
-	// 	\"check9&10_2" b>c+a,
-	// 	\"check9&10_3" c>a+b,
+	
 	//@ }
 	
 		public TriangleType judge(int a, int b, int c);
