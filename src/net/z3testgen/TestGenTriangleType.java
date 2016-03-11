@@ -36,16 +36,18 @@ class TriangleType1{
 	@SuppressWarnings("null")
 	public static void main(String[] args) throws Z3Exception, IOException {
 		ArrayList<TriangleType1> TestData = new ArrayList<TriangleType1>(); 
-		Context ctx = new Context();
+		
+		
+		 Context ctx = new Context();
 		 Tactic smtTactic = ctx.mkTactic("smt");
          
 		 Params p = ctx.mkParams();
 		 
 		 Tactic using = ctx.usingParams(smtTactic, p); 
-		 //Read file SMT2
+		 //Read and parse file SMT2
 		 BoolExpr expr = ctx.parseSMTLIB2File("input/Triangle.smt2",null,null,null,null);
-		 Solver s = ctx.mkSolver(using);	
-		 s.setParameters(p);
+		 Solver s = ctx.mkSolver(using);	//invoke SMT solver
+		 s.setParameters(p);// set the parameter for random-seed
 		 Model m= null;		
 		 
 		 Solver si = ctx.mkSolver(using);
@@ -67,11 +69,11 @@ class TriangleType1{
 	 
 // range of value
 		 int max = Integer.MAX_VALUE;
-	// int max = 1000;
+//		 int max = 1000;
 		 int min = 0;
 		 int lb =1;
 	 
-// LBound, UBound, UnBound, UpBound, NLBound, NUBound, MidVal
+// LBound, UBound, UnBound, UpBound, NLBound, NUBound, MidVal ;declare boundary values
 		 IntExpr LBound = ctx.mkInt(lb);
 		 IntExpr UBound = ctx.mkInt(max);
 		 IntExpr NLBound = (IntExpr)ctx.mkAdd(LBound, ctx.mkInt(1));
@@ -148,10 +150,11 @@ class TriangleType1{
 
 			 //	TestData.add(new TriangleType1(aa,bb,cc,m.eval(m.getConstInterp(m.getConstDecls()[3]), false)));
 			 
-			 // constraint LBound <= a,b,c <=UBound	 
+			 // add new constraint LBound <= a,b,c <=UBound	 
 			 s.add(ctx.mkAnd(ctx.mkAnd(ctx.mkLe(a,UBound),ctx.mkLe(b,UBound),ctx.mkLe(c,UBound)),
 					 ctx.mkAnd(ctx.mkGe(a,LBound),ctx.mkGe(b,LBound),ctx.mkGe(c,LBound))));
-			 // seek to next model
+			
+			 // seek to "next" model
 			 s.add(ctx.mkOr(ctx.mkEq(ctx.mkEq(a, m.eval(m.getConstInterp(m.getConstDecls()[1]), false)), ctx.mkFalse()),
 					 ctx.mkEq(ctx.mkEq(b, m.eval(m.getConstInterp(m.getConstDecls()[0]), false)), ctx.mkFalse()),
 					 ctx.mkEq(ctx.mkEq(c, m.eval(m.getConstInterp(m.getConstDecls()[2]), false)), ctx.mkFalse()),
@@ -176,10 +179,8 @@ class TriangleType1{
 					 ctx.mkAnd(ctx.mkEq(a, c),ctx.mkNot(ctx.mkEq(b, c)) )
 					 ));
 					// */
-	 
-	
 		 }
-////check Invalid partition
+////check Invalid partition class
 		 si.add(expr);
 		 // m = si.getModel(); // get value and print out
 		 a =  ctx.mkIntConst(m.getConstDecls()[1].getName());// get variable name (symbol)
@@ -198,6 +199,7 @@ class TriangleType1{
 			 bb= (IntExpr)m.eval(m.getConstInterp(m.getConstDecls()[0]), false);
 			 cc= (IntExpr)m.eval(m.getConstInterp(m.getConstDecls()[2]), false);
 			 
+//		write data into array TestData
 //			 TT.sideA = aa;
 //			 TT.sideB = bb;
 //			 TT.sideC = cc;

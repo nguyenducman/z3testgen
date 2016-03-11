@@ -1,4 +1,4 @@
-;@mannd an example of Football team - valid case
+;@mannd an example of Football team - invalid case
 (set-option :smt.arith.random_initial_value true)
 (declare-fun win () Int)
 (declare-fun draw () Int)
