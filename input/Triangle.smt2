@@ -22,12 +22,13 @@
 (and tri eq_ca (not eq_ab)))
        	ISO
        	SCA )))))
-;can add more constraints to check in partially       
-(assert (or  
+;can add more constraints to check in partially    
+   
+;(assert (or  
 	;(and tri eq_ab eq_bc)
-	(and tri (> a 0) (> b 0) (> c 0))
-	(and (> a 0) (> b 0) (> c 0) (not tri))
-	(not tri)
-	))
+;	(and tri (> a 0) (> b 0) (> c 0))
+;	(and (> a 0) (> b 0) (> c 0) (not tri))
+;	(not tri)
+;	))
 ;(check-sat)
 ;(get-model)

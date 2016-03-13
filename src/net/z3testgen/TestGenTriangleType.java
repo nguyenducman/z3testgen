@@ -57,7 +57,7 @@ class TriangleType1{
 		 sr.setParameters(p);
 		 
 
-		 // Declare side a,b,c 
+// Declare side a,b,c 
 		 IntExpr a;
 		 IntExpr b;
 		 IntExpr c;
@@ -69,7 +69,7 @@ class TriangleType1{
 	 
 // range of value
 		 int max = Integer.MAX_VALUE;
-//		 int max = 1000;
+	//	 int max = 100;
 		 int min = 0;
 		 int lb =1;
 	 
@@ -86,8 +86,8 @@ class TriangleType1{
 		 long t_diff = ((new Date()).getTime() - before.getTime());// / 1000;
 		 System.out.println("SMT2 file read time: " + t_diff + " sec");
  
-//write solution to csv file  
-		 FileWriter writer = new FileWriter("output/Triangle2.csv");
+//write solution to file .csv  
+		 FileWriter writer = new FileWriter("output/Triangle5.csv");
 		 System.out.println("model for: Triangle Type");
 		 writer.append("a");
 		 writer.append(',');
@@ -99,11 +99,14 @@ class TriangleType1{
 		 writer.append('\n');
 		 //finding all satisfiable models	 
 		 s.add(expr);
+			 
 		 
 		 int i =0;
-		 while(s.check() == Status.SATISFIABLE && i <100){
+		 while(s.check() == Status.SATISFIABLE ){
 			 i++;
-			 
+/*
+ * we can set parameter random_seed to generate random values in a range: a,b,c in (P,Q)			 
+ */
 			 p.add("random_seed", i);
 			 s.setParameters(p);	
 
@@ -146,29 +149,44 @@ class TriangleType1{
 			 writer.append(""+m.eval(m.getConstInterp(m.getConstDecls()[3]), false));
 			 writer.append('\n');		
 		
-			//====================== add to ArrayList================
-
-			 //	TestData.add(new TriangleType1(aa,bb,cc,m.eval(m.getConstInterp(m.getConstDecls()[3]), false)));
 			 
-			 // add new constraint LBound <= a,b,c <=UBound	 
-			 s.add(ctx.mkAnd(ctx.mkAnd(ctx.mkLe(a,UBound),ctx.mkLe(b,UBound),ctx.mkLe(c,UBound)),
-					 ctx.mkAnd(ctx.mkGe(a,LBound),ctx.mkGe(b,LBound),ctx.mkGe(c,LBound))));
-			
-			 // seek to "next" model
+		 //	TestData.add(new TriangleType1(aa,bb,cc,m.eval(m.getConstInterp(m.getConstDecls()[3]), false)));
+/*
+ * add constraints
+ * 	0< a,b,c <= max (max value is "artificial” bounds; maybe 100, 2000, or Integer.MAX_VALUE)
+ */
+			 s.add(ctx.mkAnd(ctx.mkGt(a, ctx.mkInt(min)),ctx.mkGt(b, ctx.mkInt(min)),ctx.mkGt(c, ctx.mkInt(min)),
+					 ctx.mkLe(a, ctx.mkInt(max)),ctx.mkLe(b, ctx.mkInt(max)),ctx.mkLe(c, ctx.mkInt(max))));
+			 			
+			 // seek to "next" model, remove repeated value
 			 s.add(ctx.mkOr(ctx.mkEq(ctx.mkEq(a, m.eval(m.getConstInterp(m.getConstDecls()[1]), false)), ctx.mkFalse()),
 					 ctx.mkEq(ctx.mkEq(b, m.eval(m.getConstInterp(m.getConstDecls()[0]), false)), ctx.mkFalse()),
-					 ctx.mkEq(ctx.mkEq(c, m.eval(m.getConstInterp(m.getConstDecls()[2]), false)), ctx.mkFalse()),
-					 ctx.mkAnd(ctx.mkEq(ctx.mkEq(tong, ctx.mkAdd(a,b,c)), ctx.mkFalse()),ctx.mkEq(ctx.mkEq(f,m.eval(m.getConstInterp(m.getConstDecls()[3]), false) ),ctx.mkFalse()))
+					 ctx.mkEq(ctx.mkEq(c, m.eval(m.getConstInterp(m.getConstDecls()[2]), false)), ctx.mkFalse())
+					// ctx.mkAnd(ctx.mkEq(ctx.mkEq(tong, ctx.mkAdd(a,b,c)), ctx.mkFalse()),ctx.mkEq(ctx.mkEq(f,m.eval(m.getConstInterp(m.getConstDecls()[3]), false) ),ctx.mkFalse()))
 					 ));
-			 s.add(ctx.mkOr(ctx.mkAnd(ctx.mkLe(a,NLBound),ctx.mkLe(b,NLBound),ctx.mkLe(c,NLBound)),
-					 ctx.mkAnd(ctx.mkGe(a,NUBound),ctx.mkGe(b,NUBound),ctx.mkGe(c,NUBound)),
-				//	 ctx.mkAnd(ctx.mkGt(a,NLBound),ctx.mkGt(b,NLBound),ctx.mkGt(c,NLBound)),
-					 ctx.mkAnd(ctx.mkEq(a,MidVal),ctx.mkEq(b,MidVal),ctx.mkEq(c,MidVal)),
-					 ctx.mkOr(ctx.mkEq(a,MidVal),ctx.mkEq(b,MidVal),ctx.mkEq(c,MidVal))));
-				//					 ctx.mkLt(a,NUBound),ctx.mkLt(b,NUBound),ctx.mkLt(c,NUBound))));//,
-				//				 ctx.mkAnd(ctx.mkLt(a,NUBound),ctx.mkLt(b,NUBound),ctx.mkLt(c,NUBound))));	
-			 
-	
+/*
+ *  add new constraint LBound <= a,b,c <=UBound	 
+ *  using boundary values,and heuristic a >= LB <=> a = LB \/ a = LB+1 \/ a > LB 
+ *  generate worst case Test cases => generates 5^3 test cases
+ */
+			 s.add(ctx.mkAnd(ctx.mkOr(ctx.mkEq(a, LBound),ctx.mkEq(a, NLBound), ctx.mkEq(a, NUBound),ctx.mkEq(a,UBound),ctx.mkEq(a,MidVal),ctx.mkEq(a,ctx.mkInt(20))),
+					 ctx.mkOr(ctx.mkEq(b, LBound),ctx.mkEq(b, NLBound), ctx.mkEq(b, NUBound),ctx.mkEq(b,UBound),ctx.mkEq(b,MidVal),ctx.mkEq(b,ctx.mkInt(40))),
+					 ctx.mkOr(ctx.mkEq(c, LBound),ctx.mkEq(c, NLBound), ctx.mkEq(c, NUBound),ctx.mkEq(c,UBound),ctx.mkEq(c,MidVal),ctx.mkEq(c,ctx.mkInt(60)))				
+					 ));			 
+/*
+ * Mix with equivalence, heuristic:
+ * each equivalence class, pick 1 representative (any value) for each variable
+ * No.test cases = 6^3 (6 values for each variable)
+ */
+//			 s.add(ctx.mkAnd(ctx.mkOr(ctx.mkEq(a, LBound),ctx.mkEq(a, NLBound), ctx.mkEq(a, NUBound),ctx.mkEq(a,UBound),ctx.mkEq(a,MidVal),ctx.mkEq(a,ctx.mkInt(20))),
+//					 ctx.mkOr(ctx.mkEq(b, LBound),ctx.mkEq(b, NLBound), ctx.mkEq(b, NUBound),ctx.mkEq(b,UBound),ctx.mkEq(b,MidVal),ctx.mkEq(b,ctx.mkInt(40))),
+//					 ctx.mkOr(ctx.mkEq(c, LBound),ctx.mkEq(c, NLBound), ctx.mkEq(c, NUBound),ctx.mkEq(c,UBound),ctx.mkEq(c,MidVal),ctx.mkEq(c,ctx.mkInt(60)))				
+//					 ));			 
+
+ /*
+  * we can add more constraints to handle the output here.
+  */
+			  	
 			 //only EQUI
 			 //s.add(ctx.mkAnd(ctx.mkEq(a, b),ctx.mkEq(b, c) ));
 			 /*
@@ -180,7 +198,8 @@ class TriangleType1{
 					 ));
 					// */
 		 }
-////check Invalid partition class
+		 
+// Generate Invalid input values
 		 si.add(expr);
 		 // m = si.getModel(); // get value and print out
 		 a =  ctx.mkIntConst(m.getConstDecls()[1].getName());// get variable name (symbol)
@@ -199,12 +218,6 @@ class TriangleType1{
 			 bb= (IntExpr)m.eval(m.getConstInterp(m.getConstDecls()[0]), false);
 			 cc= (IntExpr)m.eval(m.getConstInterp(m.getConstDecls()[2]), false);
 			 
-//		write data into array TestData
-//			 TT.sideA = aa;
-//			 TT.sideB = bb;
-//			 TT.sideC = cc;
-//			 TT.type = m.eval(m.getConstInterp(m.getConstDecls()[3]), false);
-//			 TestData.add(new TriangleType1(aa,bb,cc,m.eval(m.getConstInterp(m.getConstDecls()[3]), false)));
 			 
 			 writer.append(""+ aa);
 			 writer.append(',');
@@ -216,7 +229,7 @@ class TriangleType1{
 			 writer.append('\n');		
 			 
 			 //	}
-			 // seek to next model  
+			 // seek to next invalid model  
 
 			 si.add(ctx.mkOr(ctx.mkEq(ctx.mkEq(a, m.eval(m.getConstInterp(m.getConstDecls()[1]), false)), ctx.mkFalse()),
 					 ctx.mkEq(ctx.mkEq(b, m.eval(m.getConstInterp(m.getConstDecls()[0]), false)), ctx.mkFalse()),
@@ -224,6 +237,13 @@ class TriangleType1{
 					 ));
 			 j++;
 		 }
+//			write data into array TestData
+//		 TT.sideA = aa;
+//		 TT.sideB = bb;
+//		 TT.sideC = cc;
+//		 TT.type = m.eval(m.getConstInterp(m.getConstDecls()[3]), false);
+//		 TestData.add(new TriangleType1(aa,bb,cc,m.eval(m.getConstInterp(m.getConstDecls()[3]), false)));
+		 
 //		  //Sap xep!
 ////	        Collections.sort(TestData, new Comparator<TriangleType1>());
 //		 for (int k=0;k<TestData.size();k++){
