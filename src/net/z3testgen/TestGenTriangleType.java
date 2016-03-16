@@ -58,9 +58,9 @@ class TriangleType1{
 		 
 
 // Declare side a,b,c 
-		 IntExpr a;
-		 IntExpr b;
-		 IntExpr c;
+		 IntExpr a =ctx.mkIntConst("a");
+		 IntExpr b=ctx.mkIntConst("b");
+		 IntExpr c=ctx.mkIntConst("c");
 		 IntExpr aa;
 		 IntExpr bb;
 		 IntExpr cc;
@@ -113,9 +113,9 @@ class TriangleType1{
 			 m = s.getModel(); // get value and print out
 			
 			 //get variable name 
-			 a =  ctx.mkIntConst(m.getConstDecls()[1].getName());
-			 b =  ctx.mkIntConst(m.getConstDecls()[0].getName());
-			 c =  ctx.mkIntConst(m.getConstDecls()[2].getName());
+//			 a =  ctx.mkIntConst(m.getConstDecls()[1].getName());
+//			 b =  ctx.mkIntConst(m.getConstDecls()[0].getName());
+//			 c =  ctx.mkIntConst(m.getConstDecls()[2].getName());
 			 
 			 // get value from the model and asign to variable aa,bb,cc
 			 aa= (IntExpr)m.eval(m.getConstInterp(m.getConstDecls()[1]), false);
@@ -202,9 +202,9 @@ class TriangleType1{
 // Generate Invalid input values
 		 si.add(expr);
 		 // m = si.getModel(); // get value and print out
-		 a =  ctx.mkIntConst(m.getConstDecls()[1].getName());// get variable name (symbol)
-		 b =  ctx.mkIntConst(m.getConstDecls()[0].getName());
-		 c =  ctx.mkIntConst(m.getConstDecls()[2].getName());
+//		 a =  ctx.mkIntConst(m.getConstDecls()[1].getName());// get variable name (symbol)
+//		 b =  ctx.mkIntConst(m.getConstDecls()[0].getName());
+//		 c =  ctx.mkIntConst(m.getConstDecls()[2].getName());
 		 si.add(ctx.mkOr(ctx.mkAnd(ctx.mkGt(a,UBound),ctx.mkGt(b,UBound),ctx.mkGt(c,UBound)),
 				 ctx.mkAnd(ctx.mkLt(a,LBound),ctx.mkLt(b,LBound),ctx.mkLt(c,LBound))));	 
 
